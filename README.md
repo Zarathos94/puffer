@@ -117,8 +117,3 @@ npm run dev
 - **Switching Frontends:**  
   By default, Docker Compose runs both the React and Vue frontends. To use individually, adjust the compose file accordingly.
 
----
-
-## License
-
-MIT
