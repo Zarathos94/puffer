@@ -83,6 +83,10 @@ Puffer is a full-stack service for tracking and visualizing the pufETH/ETH conve
 
 ### Backend (Go API)
 ```sh
+go mod tidy
+```
+
+```sh
 go run main.go
 ```
 - Requires Redis running locally (`docker run -p 6379:6379 redis:7-alpine`).
