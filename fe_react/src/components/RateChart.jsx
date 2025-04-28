@@ -16,7 +16,7 @@ import styles from './RateChart.module.css';
 ChartJS.register(LineElement, PointElement, LinearScale, Title, CategoryScale, Tooltip, Legend);
 
 const logoUrl = 'https://docs.puffer.fi/img/Logo%20Mark.svg';
-const apiBase = import.meta.env.VITE_API_URL || '';
+const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 const baseChartOptions = {
     responsive: true,
@@ -80,6 +80,19 @@ const RateChart = () => {
         const arr = viewMode === 'live' ? liveData : history;
         if (!arr.length) return 'N/A';
         return Math.max(...arr.map(x => x.rate)).toFixed(6);
+    })();
+
+    // Helper to get latest totalSupply
+    const latestTotalSupply = (() => {
+        if (viewMode === 'live' && liveData.length > 0) {
+            const val = liveData[liveData.length - 1].total_supply;
+            if (val !== undefined && val !== null) return val;
+        }
+        if (history.length > 0) {
+            const val = history[history.length - 1].total_supply;
+            if (val !== undefined && val !== null) return val;
+        }
+        return 'N/A';
     })();
 
     const chartDataHistory = {
@@ -290,7 +303,13 @@ const RateChart = () => {
                                     </div>
                                     <div className={`${styles['stat-card']} ${styles.supply}`}>
                                         <div className={styles['stat-label']}>Total Supply</div>
-                                        <div className={styles['stat-value']}>N/A <span className={styles.unit}>pufETH</span></div>
+                                        <div className={styles['stat-value']}>
+                                            {latestTotalSupply !== 'N/A' ? (
+                                                <>{latestTotalSupply} <span className={styles.unit}>pufETH</span></>
+                                            ) : (
+                                                <>N/A <span className={styles.unit}>pufETH</span></>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

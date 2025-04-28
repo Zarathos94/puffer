@@ -19,6 +19,33 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+// FormatETH converts a big.Int value in wei to a human-readable ETH string with 6 decimals and K/M/B suffixes for large values.
+func FormatETH(val *big.Int) string {
+	if val == nil {
+		return "0"
+	}
+	f := new(big.Float).SetInt(val)
+	eth := new(big.Float).Quo(f, big.NewFloat(1e18))
+
+	// Get float64 value for suffix logic
+	ethFloat, _ := eth.Float64()
+	absEth := ethFloat
+	if absEth < 0 {
+		absEth = -absEth
+	}
+
+	switch {
+	case absEth >= 1_000_000_000:
+		return fmt.Sprintf("%.2fB", ethFloat/1_000_000_000)
+	case absEth >= 1_000_000:
+		return fmt.Sprintf("%.2fM", ethFloat/1_000_000)
+	case absEth >= 1_000:
+		return fmt.Sprintf("%.2fK", ethFloat/1_000)
+	default:
+		return fmt.Sprintf("%.6f", ethFloat)
+	}
+}
+
 const (
 	vaultAddress = "0xD9A442856C234a39a81a089C06451EBAa4306a72"
 	abiJSON      = `[ { "inputs": [], "name": "totalAssets", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalSupply", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" } ]`
@@ -94,10 +121,10 @@ func (rs *RateService) FetchAndUpdate() {
 	ts := time.Now().Unix()
 	hourTs := ts - (ts % 3600)
 	update := models.RateUpdate{
-		Timestamp: hourTs,
-		Rate:      rate,
-		Assets:    assets.String(),
-		Supply:    supply.String(),
+		Timestamp:   hourTs,
+		Rate:        rate,
+		Assets:      FormatETH(assets),
+		TotalSupply: FormatETH(supply),
 	}
 	if err := rs.cache.SetLatestRate(update); err != nil {
 		log.Printf("Error caching latest rate: %v", err)
@@ -180,10 +207,10 @@ func (rs *RateService) UpdateHourlyHistorical() {
 		rate, _ = fRate.Float64()
 	}
 	update := models.RateUpdate{
-		Timestamp: hourStart,
-		Rate:      rate,
-		Assets:    assets.String(),
-		Supply:    supply.String(),
+		Timestamp:   hourStart,
+		Rate:        rate,
+		Assets:      FormatETH(assets),
+		TotalSupply: FormatETH(supply),
 	}
 	if err := rs.cache.AddHistoricalRate(update); err != nil {
 		log.Printf("[HourlyHistorical] Failed to add historical rate for hour=%d: %v", hourStart, err)
@@ -379,10 +406,10 @@ func (rs *RateService) EventLogBackfillLast24Hours() {
 			rate, _ = fRate.Float64()
 		}
 		update := models.RateUpdate{
-			Timestamp: h,
-			Rate:      rate,
-			Assets:    v.Assets.String(),
-			Supply:    v.Supply.String(),
+			Timestamp:   h,
+			Rate:        rate,
+			Assets:      FormatETH(v.Assets),
+			TotalSupply: FormatETH(v.Supply),
 		}
 		err := rs.Cache().AddHistoricalRate(update)
 		if err != nil {

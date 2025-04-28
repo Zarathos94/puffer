@@ -38,7 +38,7 @@
             </div>
             <div class="stat-card supply">
               <div class="stat-label">Total Supply</div>
-              <div class="stat-value">N/A <span class="unit">pufETH</span></div>
+              <div class="stat-value">{{ totalSupply }} <span class="unit">pufETH</span></div>
             </div>
           </div>
         </div>
@@ -75,7 +75,7 @@ import axios from 'axios';
 Chart.register(LineElement, PointElement, LinearScale, Title, CategoryScale, Tooltip, Legend);
 
 const logoUrl = 'https://docs.puffer.fi/img/Logo%20Mark.svg';
-const apiBase = import.meta.env.VITE_API_URL || '';
+const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 const loading = ref(true);
 const error = ref('');
@@ -105,11 +105,16 @@ const maxRate = computed(() => {
   if (!arr.length) return 'N/A';
   return Math.max(...arr.map(x => x.rate)).toFixed(6);
 });
-const avgRate = computed(() => {
-  const arr = viewMode.value === 'live' ? liveData.value : history.value;
-  if (!arr.length) return 'N/A';
-  const avg = arr.reduce((sum, x) => sum + x.rate, 0) / arr.length;
-  return avg.toFixed(6);
+const totalSupply = computed(() => {
+  if (viewMode.value === 'live' && liveData.value.length > 0) {
+    const val = liveData.value[liveData.value.length - 1].total_supply;
+    if (val !== undefined && val !== null) return val;
+  }
+  if (history.value.length > 0) {
+    const val = history.value[history.value.length - 1].total_supply;
+    if (val !== undefined && val !== null) return val;
+  }
+  return 'N/A';
 });
 
 function formatHourMinute(ts) {

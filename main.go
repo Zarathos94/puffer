@@ -66,10 +66,10 @@ func main() {
 							rate, _ = fRate.Float64()
 						}
 						update := models.RateUpdate{
-							Timestamp: completedHour,
-							Rate:      rate,
-							Assets:    assets.String(),
-							Supply:    supply.String(),
+							Timestamp:   completedHour,
+							Rate:        rate,
+							Assets:      utils.FormatETH(assets),
+							TotalSupply: utils.FormatETH(supply),
 						}
 						rs.Cache().AddHistoricalRate(update)
 						// Remove oldest if >24

@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api
+    environment:
+      - ETH_RPC_URL=rpc-url
+      - REDIS_ADDR=redis:6379
+      - ETHERSCAN_API_KEY=etherscan-url
+    depends_on:
+      - redis
+    ports:
+      - "8080:8080"
+
+  fe_react:
+    build:
+      context: ./fe_react
+      dockerfile: Dockerfile
+    container_name: fe_react
+    environment:
+      - VITE_API_URL=http://api:8080
+    depends_on:
+      - api
+    ports:
+      - "3000:80"
+  
+  fe_vue:
+    build:
+      context: ./fe_vue
+      dockerfile: Dockerfile
+    container_name: fe_vue
+    environment:
+      - VITE_API_URL=http://api:8080
+    depends_on:
+      - api
+    ports:
+      - "3010:80"

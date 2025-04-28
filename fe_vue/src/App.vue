@@ -3,12 +3,28 @@ import RateChart from './components/RateChart.vue'
 </script>
 
 <template>
-  <div style="max-width: 800px; margin: 40px auto;">
-    <RateChart />
+  <div class="center-viewport">
+    <div class="center-inner">
+      <RateChart />
     </div>
+  </div>
 </template>
 
 <style scoped>
+.center-viewport {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.center-inner {
+  max-width: 800px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 header {
   line-height: 1.5;
 }
