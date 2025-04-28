@@ -1,0 +1,51 @@
+# Go build artifacts
+puffer
+*.exe
+*.out
+*.test
+
+# Dependency directories
+/vendor/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment files
+.env
+.env.*
+*.local
+
+# Frontend build output and dependencies
+fe_react/node_modules/
+fe_react/dist/
+fe_vue/node_modules/
+fe_vue/dist/
+fe_vue/dist-ssr/
+fe_vue/coverage/
+fe_vue/cypress/videos/
+fe_vue/cypress/screenshots/
+
+# Misc
+*.tsbuildinfo
+
+# Ignore cache if it contains generated data (uncomment if needed)
+# cache/ 
