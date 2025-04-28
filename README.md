@@ -111,7 +111,7 @@ npm run dev
 - **Formatting:**  
   Large ETH values are displayed with K/M/B suffixes (e.g., `53.25K` for 53,250 ETH).
 - **Switching Frontends:**  
-  By default, Docker Compose runs the React frontend. To use Vue, adjust the compose file accordingly.
+  By default, Docker Compose runs both the React and Vue frontends. To use individually, adjust the compose file accordingly.
 
 ---
 
